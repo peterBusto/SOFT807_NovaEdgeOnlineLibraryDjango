@@ -27,7 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://novaedgeonlinelibrary-gvcbdxe3drheemhh.eastasia-01.azurewebsites.net",
+]
 # Application definition
 
 INSTALLED_APPS = [
