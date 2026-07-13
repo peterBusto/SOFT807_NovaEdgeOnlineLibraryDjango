@@ -91,7 +91,7 @@ DATABASES = {
         'NAME': 'NovaEdgeLibraryDB',
         'USER': 'dbadmin',
         'PASSWORD': 'admin@12345',
-        'HOST': 'novaedgesolution.database.windows.net',
+        'HOST': 'nnovaedgelibrary.database.windows.net',
         'PORT': '1433',
         'OPTIONS': {
             'driver': 'ODBC Driver 18 for SQL Server',

@@ -283,7 +283,7 @@ IF NOT EXISTS (SELECT * FROM auth_user WHERE username = 'admin')
 BEGIN
     INSERT INTO auth_user (password, username, first_name, last_name, email, is_staff, is_superuser, is_active)
     VALUES (
-        'pbkdf2_sha256$260000$placeholder$placeholder', -- Replace with actual hashed password
+        'pbkdf2_sha256$1200000$xnRW9MFxj1fRaG3rQH9cXc$9KoVA+GUbU2KKmrJC6UazCvSQN/1tUzN+ITVpbwRBHY=', -- Replace with actual hashed password
         'admin',
         'Admin',
         'User',
