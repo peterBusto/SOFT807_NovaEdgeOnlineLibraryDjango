@@ -29,7 +29,7 @@ ALLOWED_HOSTS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://novaedgeonlinelibrary-gvcbdxe3drheemhh.eastasia-01.azurewebsites.net",
-    "https://blue-ocean-073e48300.7.azurestaticapps.net",
+    "https://red-plant-050290000.7.azurestaticapps.net",
 ]
 # Application definition
 
@@ -123,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://blue-ocean-073e48300.7.azurestaticapps.net",  # React app
+    "https://red-plant-050290000.7.azurestaticapps.net",  # React app
 ]
 
 # Internationalization
