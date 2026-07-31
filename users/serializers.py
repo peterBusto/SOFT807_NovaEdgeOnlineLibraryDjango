@@ -28,6 +28,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             'last_name',
             'phone_number',
             'date_of_birth',
+            'is_staff',
+            'is_superuser',
             'password',
             'password_confirm'
         ]
@@ -102,6 +104,7 @@ class UserSerializer(serializers.ModelSerializer):
             'phone_number',
             'date_of_birth',
             'is_staff',
+            'is_superuser',
             'is_active',
             'loan_count',
             'created_at',
