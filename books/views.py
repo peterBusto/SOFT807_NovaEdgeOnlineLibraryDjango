@@ -1,7 +1,6 @@
 from rest_framework import generics, status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.db.models import Q
 from datetime import datetime, timedelta
@@ -77,7 +76,6 @@ class BookDetailView(generics.RetrieveAPIView):
 
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def borrow_book(request, book_id):
     """
@@ -85,7 +83,7 @@ def borrow_book(request, book_id):
     
     POST /api/books/<id>/borrow/
     Headers:
-        Authorization: Token <your_token>
+        Authorization: Bearer <your_access_token>
     """
     try:
         book = Book.objects.get(id=book_id)
@@ -138,7 +136,6 @@ def borrow_book(request, book_id):
 
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def return_book(request, book_id):
     """
@@ -146,7 +143,7 @@ def return_book(request, book_id):
     
     POST /api/books/<id>/return/
     Headers:
-        Authorization: Token <your_token>
+        Authorization: Bearer <your_access_token>
     """
     try:
         book = Book.objects.get(id=book_id)
@@ -194,11 +191,10 @@ class BookCreateView(generics.CreateAPIView):
     
     POST /api/books/admin/create/
     Headers:
-        Authorization: Token <your_token>
+        Authorization: Bearer <admin_access_token>
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAdminUser]
 
 
@@ -208,12 +204,11 @@ class BookUpdateView(generics.UpdateAPIView):
     
     PUT /api/books/admin/<id>/update/
     Headers:
-        Authorization: Token <your_token>
+        Authorization: Bearer <admin_access_token>
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     lookup_field = 'id'
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAdminUser]
 
 
@@ -223,12 +218,11 @@ class BookDeleteView(generics.DestroyAPIView):
     
     DELETE /api/books/admin/<id>/delete/
     Headers:
-        Authorization: Token <your_token>
+        Authorization: Bearer <admin_access_token>
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     lookup_field = 'id'
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAdminUser]
 
 
@@ -238,10 +232,9 @@ class WishlistListView(generics.ListAPIView):
     
     GET /api/wishlist/
     Headers:
-        Authorization: Token <your_token>
+        Authorization: Bearer <your_access_token>
     """
     serializer_class = WishlistSerializer
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -249,7 +242,6 @@ class WishlistListView(generics.ListAPIView):
 
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def add_to_wishlist(request, book_id):
     """
@@ -257,7 +249,7 @@ def add_to_wishlist(request, book_id):
     
     POST /api/books/<id>/wishlist/add/
     Headers:
-        Authorization: Token <your_token>
+        Authorization: Bearer <your_access_token>
     """
     try:
         book = Book.objects.get(id=book_id)
@@ -296,7 +288,6 @@ def add_to_wishlist(request, book_id):
 
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def remove_from_wishlist(request, book_id):
     """
@@ -304,7 +295,7 @@ def remove_from_wishlist(request, book_id):
     
     POST /api/books/<id>/wishlist/remove/
     Headers:
-        Authorization: Token <your_token>
+        Authorization: Bearer <your_access_token>
     """
     try:
         book = Book.objects.get(id=book_id)
@@ -341,10 +332,9 @@ class CartListView(generics.ListAPIView):
     
     GET /api/cart/
     Headers:
-        Authorization: Token <your_token>
+        Authorization: Bearer <your_access_token>
     """
     serializer_class = CartSerializer
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -352,7 +342,6 @@ class CartListView(generics.ListAPIView):
 
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def add_to_cart(request, book_id):
     """
@@ -360,7 +349,7 @@ def add_to_cart(request, book_id):
     
     POST /api/books/<id>/cart/add/
     Headers:
-        Authorization: Token <your_token>
+        Authorization: Bearer <your_access_token>
     """
     try:
         book = Book.objects.get(id=book_id)
@@ -406,7 +395,6 @@ def add_to_cart(request, book_id):
 
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def remove_from_cart(request, book_id):
     """
@@ -414,7 +402,7 @@ def remove_from_cart(request, book_id):
     
     POST /api/books/<id>/cart/remove/
     Headers:
-        Authorization: Token <your_token>
+        Authorization: Bearer <your_access_token>
     """
     try:
         book = Book.objects.get(id=book_id)
@@ -446,7 +434,6 @@ def remove_from_cart(request, book_id):
 
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def clear_cart(request):
     """
@@ -454,7 +441,7 @@ def clear_cart(request):
     
     POST /api/cart/clear/
     Headers:
-        Authorization: Token <your_token>
+        Authorization: Bearer <your_access_token>
     """
     cart_items = Cart.objects.filter(user=request.user)
     count = cart_items.count()
@@ -469,7 +456,6 @@ def clear_cart(request):
 
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def checkout_cart(request):
     """
@@ -477,7 +463,7 @@ def checkout_cart(request):
     
     POST /api/cart/checkout/
     Headers:
-        Authorization: Token <your_token>
+        Authorization: Bearer <your_access_token>
     """
     cart_items = Cart.objects.filter(user=request.user)
     
