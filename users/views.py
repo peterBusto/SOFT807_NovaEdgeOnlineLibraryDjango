@@ -1,8 +1,6 @@
 from rest_framework import status, generics
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer
 from .models import User
@@ -56,14 +54,15 @@ def login_user(request):
         "email": "string",
         "password": "string"
     }
+    
+    Note: For JWT tokens, use /api/token/ endpoint instead.
+    This endpoint is kept for backward compatibility.
     """
     serializer = UserLoginSerializer(data=request.data, context={'request': request})
     
     if serializer.is_valid():
         user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
         response_data = {
-            'token': token.key,
             'user': {
                 'id': user.id,
                 'username': user.username,
@@ -73,7 +72,7 @@ def login_user(request):
                 'is_staff': user.is_staff,
                 'is_superuser': user.is_superuser,
             },
-            'message': 'Login successful'
+            'message': 'Login successful. Use /api/token/ to get JWT tokens.'
         }
         return Response(response_data, status=status.HTTP_200_OK)
     
@@ -81,7 +80,6 @@ def login_user(request):
 
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def logout_user(request):
     """
@@ -89,23 +87,18 @@ def logout_user(request):
     
     POST /api/logout/
     Headers:
-        Authorization: Token <your_token>
+        Authorization: Bearer <your_access_token>
+    
+    Note: With JWT, logout is handled client-side by discarding tokens.
+    For token blacklisting, implement additional logic if needed.
     """
-    try:
-        request.user.auth_token.delete()
-        return Response(
-            {'message': 'Logout successful'},
-            status=status.HTTP_200_OK
-        )
-    except Exception as e:
-        return Response(
-            {'error': 'Error during logout'},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+    return Response(
+        {'message': 'Logout successful. Please discard your tokens on the client side.'},
+        status=status.HTTP_200_OK
+    )
 
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def borrowing_history(request):
     """
@@ -113,7 +106,7 @@ def borrowing_history(request):
     
     GET /api/borrowing-history/
     Headers:
-        Authorization: Token <your_token>
+        Authorization: Bearer <your_access_token>
     Query parameters:
         - status: Filter by status (active/returned)
     """
@@ -143,11 +136,10 @@ class UserListView(generics.ListAPIView):
     
     GET /api/admin/users/
     Headers:
-        Authorization: Token <admin_token>
+        Authorization: Bearer <admin_access_token>
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAdminUser]
 
 
@@ -157,12 +149,11 @@ class UserUpdateView(generics.UpdateAPIView):
     
     PUT /api/admin/users/<id>/
     Headers:
-        Authorization: Token <admin_token>
+        Authorization: Bearer <admin_access_token>
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = 'id'
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAdminUser]
 
 
@@ -172,10 +163,9 @@ class UserDeleteView(generics.DestroyAPIView):
     
     DELETE /api/admin/users/<id>/
     Headers:
-        Authorization: Token <admin_token>
+        Authorization: Bearer <admin_access_token>
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = 'id'
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAdminUser]
