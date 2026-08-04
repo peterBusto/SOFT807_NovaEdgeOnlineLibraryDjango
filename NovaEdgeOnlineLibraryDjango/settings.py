@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-cq2van_)4s&aafsc3j3l94zh3@)_o1v9=6#omh#^(ud(#m5-5d'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!.
 DEBUG = True
@@ -30,6 +35,7 @@ ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = [
     "https://novaedgeonlinelibrary-gvcbdxe3drheemhh.eastasia-01.azurewebsites.net",
     "https://red-plant-050290000.7.azurestaticapps.net",
+    #"http://localhost:8000",
 ]
 # Application definition
 
@@ -88,11 +94,11 @@ WSGI_APPLICATION = 'NovaEdgeOnlineLibraryDjango.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'mssql',
-        'NAME': 'NovaEdgeLibraryDB',
-        'USER': 'dbadmin',
-        'PASSWORD': 'admin@12345',
-        'HOST': 'novaedgelibrary.database.windows.net',
-        'PORT': '1433',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
         'OPTIONS': {
             'driver': 'ODBC Driver 18 for SQL Server',
             'extra_params': (
@@ -125,6 +131,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CORS_ALLOWED_ORIGINS = [
     "https://red-plant-050290000.7.azurestaticapps.net",  # React app
+    #"http://localhost:3000",
 ]
 
 # Internationalization
