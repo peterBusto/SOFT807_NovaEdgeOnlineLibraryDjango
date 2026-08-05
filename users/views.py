@@ -110,8 +110,14 @@ def borrowing_history(request):
     Query parameters:
         - status: Filter by status (active/returned)
     """
-    loans = BookLoan.objects.filter(user=request.user)
-    
+    # Admins can request the full system borrowing history; otherwise only the
+    # current user's loans are returned.
+    all_loans = request.query_params.get('all', 'false').lower() == 'true'
+    if all_loans and (request.user.is_staff or request.user.is_superuser):
+        loans = BookLoan.objects.all()
+    else:
+        loans = BookLoan.objects.filter(user=request.user)
+
     # Filter by status if provided
     status_filter = request.query_params.get('status', None)
     if status_filter:
