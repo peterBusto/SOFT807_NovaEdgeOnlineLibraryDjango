@@ -9,6 +9,13 @@ class Book(models.Model):
     isbn = models.CharField(max_length=13, unique=True)
     publication_date = models.DateField()
     genre = models.CharField(max_length=100)
+    category = models.ForeignKey(
+        'Category',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='books'
+    )
     description = models.TextField(blank=True, null=True)
     total_copies = models.PositiveIntegerField(default=1)
     available_copies = models.PositiveIntegerField(default=1)
@@ -97,3 +104,19 @@ class Cart(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.book.title}"
+
+
+class Category(models.Model):
+    """Category model for organizing books into categories."""
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
+
+    def __str__(self):
+        return self.name

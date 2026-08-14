@@ -1,11 +1,11 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, viewsets
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.db.models import Q
 from datetime import datetime, timedelta
-from .models import Book, BookLoan, Wishlist, Cart
-from .serializers import BookSerializer, BookLoanSerializer, WishlistSerializer, CartSerializer
+from .models import Book, BookLoan, Wishlist, Cart, Category
+from .serializers import BookSerializer, BookLoanSerializer, WishlistSerializer, CartSerializer, CategorySerializer
 
 
 class BookListView(generics.ListAPIView):
@@ -530,4 +530,30 @@ def checkout_cart(request):
         },
         status=status.HTTP_200_OK
     )
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for category management.
+    
+    Provides full CRUD operations for categories:
+    - GET /api/categories/ - List all categories
+    - POST /api/categories/ - Create new category (admin only)
+    - GET /api/categories/{id}/ - Retrieve single category
+    - PUT /api/categories/{id}/ - Update category (admin only)
+    - DELETE /api/categories/{id}/ - Delete category (admin only)
+    """
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        """
+        Set permissions based on action.
+        - Read operations (list, retrieve): Any authenticated user
+        - Write operations (create, update, partial_update, destroy): Admin only
+        """
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsAdminUser()]
+        return [IsAuthenticated()]
 
