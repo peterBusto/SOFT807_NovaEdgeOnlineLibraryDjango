@@ -1,10 +1,11 @@
 from rest_framework import serializers
-from .models import Book, BookLoan, Wishlist, Cart
+from .models import Book, BookLoan, Wishlist, Cart, Category
 
 
 class BookSerializer(serializers.ModelSerializer):
     """Serializer for Book model."""
     availability_status = serializers.SerializerMethodField(read_only=True)
+    category_name = serializers.CharField(source='category.name', read_only=True)
 
     class Meta:
         model = Book
@@ -15,6 +16,8 @@ class BookSerializer(serializers.ModelSerializer):
             'isbn',
             'publication_date',
             'genre',
+            'category',
+            'category_name',
             'description',
             'total_copies',
             'available_copies',
@@ -23,7 +26,7 @@ class BookSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at'
         ]
-        read_only_fields = ['created_at', 'updated_at', 'availability_status']
+        read_only_fields = ['created_at', 'updated_at', 'availability_status', 'category_name']
 
     def get_availability_status(self, obj):
         """Return availability status based on available copies."""
@@ -103,3 +106,18 @@ class CartSerializer(serializers.ModelSerializer):
             'added_date'
         ]
         read_only_fields = ['added_date']
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    """Serializer for Category model."""
+
+    class Meta:
+        model = Category
+        fields = [
+            'id',
+            'name',
+            'description',
+            'created_at',
+            'updated_at'
+        ]
+        read_only_fields = ['created_at', 'updated_at']
